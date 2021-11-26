@@ -78,12 +78,27 @@ def submit(s: requests.Session):
 
 
 def make_msg(res, daily):
-    msg = r'''**智慧沈航打卡结果**
-    **{}**
-    打卡时间：{}
-    体温：{} | {} | {}
-    '''.format(res, daily['riqi'], daily['tiwen'], daily['tiwen1'], daily['tiwen2']).replace("-", r"\-") \
-        .replace(".", r"\.").replace("|", r"\|").replace("*", r"\*")
+    msg = r'''
+    <h4 style="background: #85d08f;
+    padding: 10px;text-align: center;margin: 0;">
+            智慧沈航打卡结果
+        </h4>
+        <center style="color:green;">
+            {}
+        </center>
+        <div>
+            <b>
+                打卡时间
+            </b>
+            ：{}
+        </div>
+        <div>
+            <b>
+                体温
+            </b>
+            ：{} | {} | {}
+        </div>
+    '''.format(res, daily['riqi'], daily['tiwen'], daily['tiwen1'], daily['tiwen2'])
     return msg
 
 
@@ -96,7 +111,7 @@ def send_telegram_message(bot_token, chat_id, msg):
     """
     import telegram
     bot = telegram.Bot(token=bot_token)
-    bot.send_message(chat_id=chat_id, text=msg, parse_mode="MarkdownV2")
+    bot.send_message(chat_id=chat_id, text=msg, parse_mode="HTML")
 
 
 def report(username, password):
