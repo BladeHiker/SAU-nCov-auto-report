@@ -69,10 +69,10 @@ def submit(s: requests.Session):
 
 
 def make_msg(res, daily):
-    msg = '''\# 智慧沈航打卡结果
+    msg = r'''# 智慧沈航打卡结果
     **{}**
-    \- 打卡时间：{}
-    \- 体温：{}\-{}\-{}
+    - 打卡时间：{}
+    - 体温：{}-{}-{}
     '''.format(res, daily['riqi'], daily['tiwen'], daily['tiwen1'], daily['tiwen2'])
     return msg
 
