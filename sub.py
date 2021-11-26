@@ -82,7 +82,7 @@ def submit(s: requests.Session):
 def make_msg(res, daily):
     msg = r'''
 <u>智慧沈航打卡结果</u>
-<a href="https://app.sau.edu.cn/form/wap/default?formid=10">{}<>
+<a href="https://app.sau.edu.cn/form/wap/default?formid=10">{}</a>
 打卡时间：<code>{}</code>
 体温：<code>{}|{}|{}</code>'''.format(res, daily['riqi'], daily['tiwen'], daily['tiwen1'], daily['tiwen2'])
     return msg
@@ -91,7 +91,7 @@ def make_msg(res, daily):
 def make_fail_msg(res, time):
     msg = r'''
 <u>智慧沈航打卡结果</u>
-<a href="https://app.sau.edu.cn/form/wap/default?formid=10">{}<>
+<a href="https://app.sau.edu.cn/form/wap/default?formid=10">{}</a>
 打卡时间：<code>{}</code>
 '''.format(res, time)
     return msg
