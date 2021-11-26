@@ -60,31 +60,29 @@ def submit(s: requests.Session):
         'riqi': datetime.now(tz=pytz.timezone("Asia/Shanghai")).strftime("%Y-%m-%d"),
         'id': sauid}
     proxies = {"http": None, "https": None}
-    send_telegram_message(bot_token, chat_id, make_msg("测试", new_daily))
-    return True
-    # try:
-    #     r = s.post("https://app.sau.edu.cn/form/wap/default/save?formid=10", data=new_daily, proxies=proxies,
-    #                verify=False)
-    #     result = r.json()
-    #     if result.get('m') == "操作成功":
-    #         print("打卡成功")
-    #         print(str(new_daily))
-    #         send_telegram_message(bot_token, chat_id, make_msg(result.get('m'), new_daily))
-    #         return True
-    #     else:
-    #         print("打卡失败，错误信息: ", r.json())
-    #         return False
-    # except Exception as err:
-    #     print("打卡失败，错误信息: ", err)
-    #     return False
+    try:
+        r = s.post("https://app.sau.edu.cn/form/wap/default/save?formid=10", data=new_daily, proxies=proxies,
+                   verify=False)
+        result = r.json()
+        if result.get('m') == "操作成功":
+            print("打卡成功")
+            print(str(new_daily))
+            send_telegram_message(bot_token, chat_id, make_msg(result.get('m'), new_daily))
+            return True
+        else:
+            print("打卡失败，错误信息: ", r.json())
+            return False
+    except Exception as err:
+        print("打卡失败，错误信息: ", err)
+        return False
 
 
 def make_msg(res, daily):
     msg = r'''
-        <u>智慧沈航打卡结果</u>
-        <b>{}</b>
-        打卡时间：<code>{}</code>
-        体温：<code>{}|{}|{}</code>'''.format(res, daily['riqi'], daily['tiwen'], daily['tiwen1'], daily['tiwen2'])
+<u>智慧沈航打卡结果</u>
+<a href="https://app.sau.edu.cn/form/wap/default?formid=10">{}<>
+打卡时间：<code>{}</code>
+体温：<code>{}|{}|{}</code>'''.format(res, daily['riqi'], daily['tiwen'], daily['tiwen1'], daily['tiwen2'])
     return msg
 
 
@@ -110,13 +108,13 @@ def report(username, password):
 
     print(datetime.now(tz=pytz.timezone("Asia/Shanghai")).strftime("%Y-%m-%d %H:%M:%S %Z"))
     success = False
-    for i in range(1, 5):
+    for i in range(1, 20):
         print("开始第{}次登录尝试".format(i))
         if login(s, username, password):
             print("{}::登录成功，开始打卡".format(
                 datetime.now(tz=pytz.timezone("Asia/Shanghai")).strftime("%Y-%m-%d %H:%M:%S %Z")))
             break
-    for i in range(1, 5):
+    for i in range(1, 20):
         print("开始第{}次打卡尝试".format(i))
         if submit(s):
             print("{}::打卡成功，任务结束".format(
