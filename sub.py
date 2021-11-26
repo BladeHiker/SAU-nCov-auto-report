@@ -60,37 +60,30 @@ def submit(s: requests.Session):
         'riqi': datetime.now(tz=pytz.timezone("Asia/Shanghai")).strftime("%Y-%m-%d"),
         'id': sauid}
     proxies = {"http": None, "https": None}
-    try:
-        r = s.post("https://app.sau.edu.cn/form/wap/default/save?formid=10", data=new_daily, proxies=proxies,
-                   verify=False)
-        result = r.json()
-        if result.get('m') == "操作成功":
-            print("打卡成功")
-            print(str(new_daily))
-            send_telegram_message(bot_token, chat_id, make_msg(result.get('m'), new_daily))
-            return True
-        else:
-            print("打卡失败，错误信息: ", r.json())
-            return False
-    except Exception as err:
-        print("打卡失败，错误信息: ", err)
-        return False
+    send_telegram_message(bot_token, chat_id, make_msg("测试", new_daily))
+    # try:
+    #     r = s.post("https://app.sau.edu.cn/form/wap/default/save?formid=10", data=new_daily, proxies=proxies,
+    #                verify=False)
+    #     result = r.json()
+    #     if result.get('m') == "操作成功":
+    #         print("打卡成功")
+    #         print(str(new_daily))
+    #         send_telegram_message(bot_token, chat_id, make_msg(result.get('m'), new_daily))
+    #         return True
+    #     else:
+    #         print("打卡失败，错误信息: ", r.json())
+    #         return False
+    # except Exception as err:
+    #     print("打卡失败，错误信息: ", err)
+    #     return False
 
 
 def make_msg(res, daily):
     msg = r'''
-        <pre style="padding: 8px;text-align: center;">
-            <u>智慧沈航打卡结果</u>
-        </pre>
-        <pre style="text-align: center;">
-            <b>{}</b>
-        </pre>
-        <pre>
-            打卡时间：{}
-        </pre>
-        <pre>
-            体温：{} | {} | {}
-        </pre>
+        <pre style="padding: 8px;text-align: center;"><u>智慧沈航打卡结果</u></pre>
+        <pre style="text-align: center;"><b>{}</b></pre>
+        <pre>打卡时间：{}</pre>
+        <pre>体温：{} | {} | {}</pre>
     '''.format(res, daily['riqi'], daily['tiwen'], daily['tiwen1'], daily['tiwen2'])
     return msg
 
