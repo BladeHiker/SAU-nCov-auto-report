@@ -4,7 +4,6 @@ import requests
 from time import sleep
 from random import randint
 from datetime import datetime
-import telegram
 
 # 忽略网站的证书错误，这很不安全 :(
 verify_cert = True
@@ -59,7 +58,8 @@ def submit(s: requests.Session):
     result = r.json()
     if result.get('m') == "操作成功":
         print("打卡成功")
-        send_telegram_message(bot_token, chat_id, result.get('m') + "\n" + new_daily)
+        print(str(new_daily))
+        send_telegram_message(bot_token, chat_id, result.get('m') + "\n" + str(new_daily))
         exit(0)
     else:
         print("打卡失败，错误信息: ", r.json())
@@ -73,6 +73,7 @@ def send_telegram_message(bot_token, chat_id, msg):
     此处使用时再导入以保证向后兼容 python 3.5；
     如果要使用 tg 消息通知，请使用 python 3.6或更高的版本
     """
+    import telegram
     bot = telegram.Bot(token=bot_token)
     bot.send_message(chat_id=chat_id, text=msg)
 
