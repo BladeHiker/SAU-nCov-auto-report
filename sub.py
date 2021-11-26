@@ -8,6 +8,8 @@ from datetime import datetime
 # 忽略网站的证书错误，这很不安全 :(
 verify_cert = True
 
+try_times = 20
+
 # 全局变量
 # 读取环境变量中的登录信息
 user = os.environ['SEP_USER_NAME']  # 学号
@@ -86,6 +88,15 @@ def make_msg(res, daily):
     return msg
 
 
+def make_fail_msg(res, time):
+    msg = r'''
+<u>智慧沈航打卡结果</u>
+<a href="https://app.sau.edu.cn/form/wap/default?formid=10">{}<>
+打卡时间：<code>{}</code>
+'''.format(res, time)
+    return msg
+
+
 def send_telegram_message(bot_token, chat_id, msg):
     """
     Telegram通知打卡结果
@@ -108,22 +119,26 @@ def report(username, password):
 
     print(datetime.now(tz=pytz.timezone("Asia/Shanghai")).strftime("%Y-%m-%d %H:%M:%S %Z"))
     success = False
-    for i in range(1, 20):
+    for i in range(1, try_times + 1):
         print("开始第{}次登录尝试".format(i))
         if login(s, username, password):
             print("{}::登录成功，开始打卡".format(
                 datetime.now(tz=pytz.timezone("Asia/Shanghai")).strftime("%Y-%m-%d %H:%M:%S %Z")))
+            # 尝试打卡
+            for j in range(1, try_times + 1):
+                print("开始第{}次打卡尝试".format(j))
+                if submit(s):
+                    print("{}::打卡成功，任务结束".format(
+                        datetime.now(tz=pytz.timezone("Asia/Shanghai")).strftime("%Y-%m-%d %H:%M:%S %Z")))
+                    success = True
+                    break
             break
-    for i in range(1, 20):
-        print("开始第{}次打卡尝试".format(i))
-        if submit(s):
-            print("{}::打卡成功，任务结束".format(
-                datetime.now(tz=pytz.timezone("Asia/Shanghai")).strftime("%Y-%m-%d %H:%M:%S %Z")))
-            success = True
-            break
+
     if not success:
+        send_telegram_message(bot_token, chat_id, make_msg("打卡失败,已尝试{}次".format(try_times),
+                                                           datetime.now(tz=pytz.timezone("Asia/Shanghai")).strftime(
+                                                               "%Y-%m-%d %H:%M:%S %Z")))
         exit(1)
 
-
-if __name__ == "__main__":
-    report(username=user, password=passwd)
+        if __name__ == "__main__":
+            report(username=user, password=passwd)
