@@ -28,8 +28,10 @@ def login(s: requests.Session, username, password):
     r = s.post("https://ucapp.sau.edu.cn/wap/login/invalid", data=payload)
     if r.json().get('m') != "操作成功":
         print("登录失败，错误信息: ", r.text)
+        return False
     else:
         print("登录成功")
+        return True
 
 
 def submit(s: requests.Session):
@@ -60,10 +62,10 @@ def submit(s: requests.Session):
         print("打卡成功")
         print(str(new_daily))
         send_telegram_message(bot_token, chat_id, result.get('m') + "\n" + str(new_daily))
-        exit(0)
+        return True
     else:
         print("打卡失败，错误信息: ", r.json())
-        exit(1)
+        return False
 
 
 def send_telegram_message(bot_token, chat_id, msg):
@@ -87,12 +89,19 @@ def report(username, password):
     s.headers.update(header)
 
     print(datetime.now(tz=pytz.timezone("Asia/Shanghai")).strftime("%Y-%m-%d %H:%M:%S %Z"))
-    for i in range(randint(1, 5), 0, -1):
-        print("等待{}秒后填报".format(i))
-        sleep(1)
 
-    login(s, username, password)
-    submit(s)
+    for i in range(1, 10):
+        print("开始第{}次登录尝试".format(i))
+        if login(s, username, password):
+            print("{}::登录成功，开始打卡".format(
+                datetime.now(tz=pytz.timezone("Asia/Shanghai")).strftime("%Y-%m-%d %H:%M:%S %Z")))
+            break
+    for i in range(1, 10):
+        print("开始第{}次打卡尝试".format(i))
+        if submit(s):
+            print("{}::打卡成功，任务结束".format(
+                datetime.now(tz=pytz.timezone("Asia/Shanghai")).strftime("%Y-%m-%d %H:%M:%S %Z")))
+            break
 
 
 if __name__ == "__main__":
