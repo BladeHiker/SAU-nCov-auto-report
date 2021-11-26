@@ -1,7 +1,7 @@
 import os
+
 import pytz
 import requests
-from time import sleep
 from random import randint
 from datetime import datetime
 
@@ -50,9 +50,9 @@ def submit(s: requests.Session):
         'shentishifouyoubushizhengzhuan': "否",
         'shifouyoufare': "否",
         'qitaxinxi': "",
-        'tiwen': "36.1",
-        'tiwen1': "36.1",
-        'tiwen2': "36.4",
+        'tiwen': "36.{}".format(randint(0, 8)),
+        'tiwen1': "36.{}".format(randint(0, 8)),
+        'tiwen2': "36.{}".format(randint(0, 8)),
         'riqi': datetime.now(tz=pytz.timezone("Asia/Shanghai")).strftime("%Y-%m-%d"),
         'id': sauid}
     proxies = {"http": None, "https": None}
@@ -61,11 +61,20 @@ def submit(s: requests.Session):
     if result.get('m') == "操作成功":
         print("打卡成功")
         print(str(new_daily))
-        send_telegram_message(bot_token, chat_id, result.get('m') + "\n" + str(new_daily))
+        send_telegram_message(bot_token, chat_id, make_msg(result.get('m'), new_daily))
         return True
     else:
         print("打卡失败，错误信息: ", r.json())
         return False
+
+
+def make_msg(res, daily):
+    msg = '''# 智慧沈航打卡结果
+    **{}**
+    - 打卡时间：{}
+    - 体温：{}-{}-{}
+    '''.format(res, daily['riqi'], daily['tiwen'], daily['tiwen1'], daily['tiwen2'])
+    return msg
 
 
 def send_telegram_message(bot_token, chat_id, msg):
@@ -77,7 +86,7 @@ def send_telegram_message(bot_token, chat_id, msg):
     """
     import telegram
     bot = telegram.Bot(token=bot_token)
-    bot.send_message(chat_id=chat_id, text=msg)
+    bot.send_message(chat_id=chat_id, text=msg, parse_mode="MarkdownV2")
 
 
 def report(username, password):
@@ -90,13 +99,13 @@ def report(username, password):
 
     print(datetime.now(tz=pytz.timezone("Asia/Shanghai")).strftime("%Y-%m-%d %H:%M:%S %Z"))
 
-    for i in range(1, 10):
+    for i in range(1, 20):
         print("开始第{}次登录尝试".format(i))
         if login(s, username, password):
             print("{}::登录成功，开始打卡".format(
                 datetime.now(tz=pytz.timezone("Asia/Shanghai")).strftime("%Y-%m-%d %H:%M:%S %Z")))
             break
-    for i in range(1, 10):
+    for i in range(1, 20):
         print("开始第{}次打卡尝试".format(i))
         if submit(s):
             print("{}::打卡成功，任务结束".format(
