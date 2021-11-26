@@ -79,10 +79,10 @@ def submit(s: requests.Session):
 
 def make_msg(res, daily):
     msg = r'''
-    <h4 style="background: #85d08f;
-    padding: 10px;text-align: center;margin: 0;">
+    <div style="background: #bef0c5;
+    padding: 10px;text-align: center;margin: 0; font-size: large;">
             智慧沈航打卡结果
-        </h4>
+        </div>
         <center style="color:green;">
             {}
         </center>
