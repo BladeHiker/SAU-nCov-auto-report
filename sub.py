@@ -124,13 +124,13 @@ def report(username, password):
 
     print(datetime.now(tz=pytz.timezone("Asia/Shanghai")).strftime("%Y-%m-%d %H:%M:%S %Z"))
     success = False
-    for i in range(1, 20):
+    for i in range(1, 2):
         print("开始第{}次登录尝试".format(i))
         if login(s, username, password):
             print("{}::登录成功，开始打卡".format(
                 datetime.now(tz=pytz.timezone("Asia/Shanghai")).strftime("%Y-%m-%d %H:%M:%S %Z")))
             break
-    for i in range(1, 20):
+    for i in range(1, 2):
         print("开始第{}次打卡尝试".format(i))
         if submit(s):
             print("{}::打卡成功，任务结束".format(
