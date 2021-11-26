@@ -25,13 +25,17 @@ def login(s: requests.Session, username, password):
         "username": username,
         "password": password
     }
-    r = s.post("https://ucapp.sau.edu.cn/wap/login/invalid", data=payload)
-    if r.json().get('m') != "操作成功":
-        print("登录失败，错误信息: ", r.text)
+    try:
+        r = s.post("https://ucapp.sau.edu.cn/wap/login/invalid", data=payload)
+        if r.json().get('m') != "操作成功":
+            print("登录失败，错误信息: ", r.text)
+            return False
+        else:
+            print("登录成功")
+            return True
+    except Exception as err:
+        print("登录失败，错误信息: ", err)
         return False
-    else:
-        print("登录成功")
-        return True
 
 
 def submit(s: requests.Session):
@@ -77,7 +81,7 @@ def make_msg(res, daily):
     msg = r'''**智慧沈航打卡结果**
     **{}**
     打卡时间：{}
-    体温：{} | {} | {}
+    体温：{} \| {} \| {}
     '''.format(res, daily['riqi'], daily['tiwen'], daily['tiwen1'], daily['tiwen2']).replace("-", r"\-").replace(".",
                                                                                                                  r"\.")
     return msg
