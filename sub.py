@@ -73,7 +73,7 @@ def make_msg(res, daily):
     **{}**
     打卡时间：{}
     体温：{} | {} | {}
-    '''.format(res, daily['riqi'], daily['tiwen'], daily['tiwen1'], daily['tiwen2'])
+    '''.format(res, daily['riqi'], daily['tiwen'], daily['tiwen1'], daily['tiwen2']).replace("-", "\-")
     return msg
 
 
