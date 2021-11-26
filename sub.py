@@ -69,7 +69,7 @@ def submit(s: requests.Session):
 
 
 def make_msg(res, daily):
-    msg = '''# 智慧沈航打卡结果
+    msg = '''\# 智慧沈航打卡结果
     **{}**
     - 打卡时间：{}
     - 体温：{}-{}-{}
