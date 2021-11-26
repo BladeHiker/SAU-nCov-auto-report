@@ -72,7 +72,7 @@ def make_msg(res, daily):
     msg = r'''**智慧沈航打卡结果**
     **{}**
     打卡时间：{}
-    体温：{}-{}-{}
+    体温：{} | {} | {}
     '''.format(res, daily['riqi'], daily['tiwen'], daily['tiwen1'], daily['tiwen2'])
     return msg
 
