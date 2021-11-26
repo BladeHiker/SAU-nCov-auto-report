@@ -53,8 +53,8 @@ def submit(s: requests.Session):
         'tiwen2': "36.4",
         'riqi': datetime.now(tz=pytz.timezone("Asia/Shanghai")).strftime("%Y-%m-%d"),
         'id': sauid}
-
-    r = s.post("https://app.sau.edu.cn/form/wap/default/save?formid=10", data=new_daily)
+    proxies = {"http": None, "https": None}
+    r = s.post("https://app.sau.edu.cn/form/wap/default/save?formid=10", data=new_daily, proxies=proxies, verify=False)
     result = r.json()
     if result.get('m') == "操作成功":
         print("打卡成功")
