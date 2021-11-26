@@ -4,19 +4,22 @@ import requests
 from time import sleep
 from random import randint
 from datetime import datetime
+import telegram
 
 # 忽略网站的证书错误，这很不安全 :(
 verify_cert = False
 
 # 全局变量
-#读取环境变量中的登录信息
+# 读取环境变量中的登录信息
 user = os.environ['SEP_USER_NAME']  # 学号
 passwd = os.environ['SEP_PASSWD']  # SAU密码
-api_key = os.environ['API_KEY']  # server酱的api，填了可以微信通知打卡结果，不填没影响
-xingming = os.environ['XINGMING'] 
-telnum = os.environ['TELNUM'] 
-xueyuan = os.environ['XUEYUAN'] 
-sauid = os.environ['SAUID'] 
+xingming = os.environ['XINGMING']
+telnum = os.environ['TELNUM']
+xueyuan = os.environ['XUEYUAN']
+sauid = os.environ['SAU_ID']
+bot_token = os.environ['BOT_TOKEN']
+chat_id = os.environ['CHAT_ID']
+
 
 def login(s: requests.Session, username, password):
     payload = {
@@ -29,6 +32,7 @@ def login(s: requests.Session, username, password):
     else:
         print("登录成功")
 
+
 def submit(s: requests.Session):
     new_daily = {
         'xingming': xingming,
@@ -38,16 +42,16 @@ def submit(s: requests.Session):
         'dangqiansuozaishengfen': "辽宁省",
         'dangqiansuozaichengshi': "沈阳市",
         'shifouyuhubeiwuhanrenyuanmiqie': "否",
-        'shifoujiankangqingkuang': "是", 
+        'shifoujiankangqingkuang': "是",
         'shifoujiechuguohubeihuoqitayou': "否",
-        'fanhuididian':"",
+        'fanhuididian': "",
         'shifouweigelirenyuan': "否",
         'shentishifouyoubushizhengzhuan': "否",
         'shifouyoufare': "否",
         'qitaxinxi': "",
-        'tiwen': "36.2",
-        'tiwen1': "36.2",
-        'tiwen2': "36.2",
+        'tiwen': "36.1",
+        'tiwen1': "36.1",
+        'tiwen2': "36.4",
         'riqi': datetime.now(tz=pytz.timezone("Asia/Shanghai")).strftime("%Y-%m-%d"),
         'id': sauid}
 
@@ -55,19 +59,23 @@ def submit(s: requests.Session):
     result = r.json()
     if result.get('m') == "操作成功":
         print("打卡成功")
-        message(api_key, result.get('m'), new_daily)
+        send_telegram_message(bot_token, chat_id, result.get('m') + "\n" + new_daily)
         exit(0)
     else:
         print("打卡失败，错误信息: ", r.json())
         exit(1)
 
-def message(key, title, body):
+
+def send_telegram_message(bot_token, chat_id, msg):
     """
-    微信通知打卡结果
+    Telegram通知打卡结果
+    python-telegram-bot 只支持 python 3.6或更高的版本
+    此处使用时再导入以保证向后兼容 python 3.5；
+    如果要使用 tg 消息通知，请使用 python 3.6或更高的版本
     """
-    # 错误的key也可以发送消息，无需处理 :)
-    msg_url = "https://sc.ftqq.com/{}.send?text={}&desp={}".format(key, title, body)
-    requests.get(msg_url)
+    bot = telegram.Bot(token=bot_token)
+    bot.send_message(chat_id=chat_id, text=msg)
+
 
 def report(username, password):
     s = requests.Session()
@@ -83,6 +91,7 @@ def report(username, password):
 
     login(s, username, password)
     submit(s)
+
 
 if __name__ == "__main__":
     report(username=user, password=passwd)
