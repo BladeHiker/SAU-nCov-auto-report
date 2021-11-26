@@ -61,6 +61,7 @@ def submit(s: requests.Session):
         'id': sauid}
     proxies = {"http": None, "https": None}
     send_telegram_message(bot_token, chat_id, make_msg("测试", new_daily))
+    return True
     # try:
     #     r = s.post("https://app.sau.edu.cn/form/wap/default/save?formid=10", data=new_daily, proxies=proxies,
     #                verify=False)
@@ -80,10 +81,17 @@ def submit(s: requests.Session):
 
 def make_msg(res, daily):
     msg = r'''
-        <pre style="padding: 8px;text-align: center;"><u>智慧沈航打卡结果</u></pre>
-        <pre style="text-align: center;"><b>{}</b></pre>
-        <pre>打卡时间：{}</pre>
-        <pre>体温：{} | {} | {}</pre>
+        <pre style="padding: 8px;text-align: center;"><u>智慧沈航打卡结果</u></pre><pre style="text-align: center;"><b>{}</b></pre><pre>打卡时间：{}</pre><pre>体温：{} | {} | {}</pre>
+        <b>bold</b>, <strong>bold</strong>
+        <i>italic</i>, <em>italic</em>
+        <u>underline</u>, <ins>underline</ins>
+        <s>strikethrough</s>, <strike>strikethrough</strike>, <del>strikethrough</del>
+        <b>bold <i>italic bold <s>italic bold strikethrough</s> <u>underline italic bold</u></i> bold</b>
+        <a href="http://www.example.com/">inline URL</a>
+        <a href="tg://user?id=123456789">inline mention of a user</a>
+        <code>inline fixed-width code</code>
+        <pre>pre-formatted fixed-width code block</pre>
+        <pre><code class="language-python">pre-formatted fixed-width code block written in the Python programming language</code></pre>
     '''.format(res, daily['riqi'], daily['tiwen'], daily['tiwen1'], daily['tiwen2'])
     return msg
 
