@@ -79,24 +79,17 @@ def submit(s: requests.Session):
 
 def make_msg(res, daily):
     msg = r'''
-        <pre style="background: #bef0c5;
-    padding: 10px;text-align: center;margin: 0; font-size: large;">
-            智慧沈航打卡结果
+        <pre style="padding: 8px;text-align: center;">
+            <u>智慧沈航打卡结果</u>
         </pre>
-        <pre style="color:green;text-align: center;font-weight: bold;">
-            {}
-        </pre>
-        <pre>
-            <b>
-                打卡时间
-            </b>
-            ：{}
+        <pre style="text-align: center;">
+            <b>{}</b>
         </pre>
         <pre>
-            <b>
-                体温
-            </b>
-            ：{} | {} | {}
+            打卡时间：{}
+        </pre>
+        <pre>
+            体温：{} | {} | {}
         </pre>
     '''.format(res, daily['riqi'], daily['tiwen'], daily['tiwen1'], daily['tiwen2'])
     return msg
