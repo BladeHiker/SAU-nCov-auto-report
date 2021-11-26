@@ -140,5 +140,6 @@ def report(username, password):
                                                                "%Y-%m-%d %H:%M:%S %Z")))
         exit(1)
 
-        if __name__ == "__main__":
-            report(username=user, password=passwd)
+
+if __name__ == "__main__":
+    report(username=user, password=passwd)
