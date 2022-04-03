@@ -135,10 +135,10 @@ def report(username, password):
             break
 
     if not success:
-        send_telegram_message(bot_token, chat_id, make_msg("打卡失败,已尝试{}次".format(try_times),
+        send_telegram_message(bot_token, chat_id, make_fail_msg("打卡失败,已尝试{}次".format(try_times),
                                                            datetime.now(tz=pytz.timezone("Asia/Shanghai")).strftime(
                                                                "%Y-%m-%d %H:%M:%S %Z")))
-        exit(1)
+        #exit(1)
 
 
 if __name__ == "__main__":
